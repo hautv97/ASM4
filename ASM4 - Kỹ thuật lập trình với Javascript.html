@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Project 4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel='stylesheet' type='text/css' href='ASM4 - style.css'>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+	</script>
+	<script src="//code.jquery.com/jquery-1.11.3.min.js">
+	</script>
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js">
+	</script>
+	
+</head>
+
+<body>
+<h1>My News<img id='find' src='https://cdn.pixabay.com/photo/2016/03/31/19/14/magnifying-glass-1294834_1280.png'></h1>
+
+<div class="text-center" style="display: none;" id='loader'>
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<div id='search'>
+  <label>Keywords</label>
+  <input type='text' placeholder="Search somethings..." id='input'>
+  <input type='submit' value='Search' id='search-btn'>
+  <button id='quit'>x</button> 
+</div>
+
+<div id='news'></div>
+
+<footer class="bg-light text-center">
+  <!-- Grid container -->
+  <div class="container p-4 pb-0">
+    <!-- Section: Form -->
+    <section class="">
+      <form action="">
+        <!--Grid row-->
+        <div class="row d-flex justify-content-center">
+          <!--Grid column-->
+          <div class="col-auto">
+            <p class="pt-2">
+              <strong>Sign up for our newsletter</strong>
+            </p>
+          </div>
+          <!--Grid column-->
+
+          <!--Grid column-->
+          <div class="col-md-5 col-12">
+            <!-- Email input -->
+            <div class="form-outline mb-4">
+              <input type="email" id="form5Example2" class="form-control" />
+              <label class="form-label" for="form5Example2">Email address</label>
+            </div>
+          </div>
+          <!--Grid column-->
+
+          <!--Grid column-->
+          <div class="col-auto">
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary mb-4">
+              Subscribe
+            </button>
+          </div>
+          <!--Grid column-->
+        </div>
+        <!--Grid row-->
+      </form>
+    </section>
+    <!-- Section: Form -->
+  </div>
+  <!-- Grid container -->
+
+  <!-- Copyright -->
+  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+    © 2020 Copyright:
+    <a class="text-dark" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+  </div>
+  <!-- Copyright -->
+</footer>
+
+
+
+
+<script type="text/javascript">
+// Lấy tin tức
+	fetch('https://gnews.io/api/v4/top-headlines?&lang=en&token=8fcf49c5f0c2678bbf40b55311c44d87')
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+
+// Nhập data
+       for (var i = 0; i < data.articles.length; i++) {
+        var title = data.articles[i].title;
+       var img = data.articles[i].image;
+        var date = data.articles[i].publishedAt;
+        var descript = data.articles[i].description;
+        var url = data.articles[i].url;
+
+        var news = '<div><img src=' +img +'><h4><a href=\'' + url + '\' target=\'_blank\'>' + title + '</a></h4><p>' + date + '</p><p>' + descript + '</p></div>'     
+       $('#news').append(news);
+       $('#news div').addClass('content')
+      $('#search').hide();
+       };
+    });
+
+  //Ẩn hiện thanh tìm kiếm
+    $('#find').on('click', function() {
+      $('#search').show();
+      $('body').css('background-color', 'lightgray');
+    });
+
+//Search news bằng từ khóa theo ý thích
+   $('#search-btn').on('click', function() { 
+    $('#search').hide();
+      let keyWords = $('input').val();
+      let url = 'https://gnews.io/api/v4/search?&q='+keyWords+'&lang=en&token=8fcf49c5f0c2678bbf40b55311c44d87'
+
+    if (keyWords !== '') {
+    $('#loader').show();
+    fetch(url)
+    .then(function (response) {	
+        return response.json();
+    })
+   .then(function (data) {   
+    $('#news div').remove();
+       for (var i = 0; i < data.articles.length; i++) {
+        var title = data.articles[i].title;
+        var img = data.articles[i].image;
+        var date = data.articles[i].publishedAt;
+        var descript = data.articles[i].description;
+        var url = data.articles[i].url;
+        
+        var news = '<div><img src=' +img +'><h4><a href=\'' + url + '\' target=\'_blank\'>' + title + '</a></h4><p>' + date + '</p><p>' + descript + '</p></div>'     
+       $('#news').append(news);
+       $('#news div').addClass('content');
+       }
+     $('#loader').hide()  
+    });
+    $('#input').val('');
+    $('body').css('background-color', 'white');
+    } else {
+    	$('body').css('background-color', 'white');
+    }
+    });
+    $('button').on('click', function () {
+    	$('#search').hide();
+    	$('body').css('background-color', 'white');
+    })
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>
