@@ -1,4 +1,4 @@
-const token = "8fcf49c5f0c2678bbf40b55311c44d87";
+const token = "324f36de99639964273105a3b9649974";
 const language = "en";
 
 const getNews = (keyWords) => {
